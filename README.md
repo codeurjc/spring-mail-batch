@@ -18,3 +18,12 @@ Java 8 is required. To run the application:
       --codeurjc.batch.data=data.csv \
       --codeurjc.batch.attachment=sample-attachment.txt
     
+## Release changes
+
+**0.2.0** 
+
+* Add velocity templates for building email subject and body
+
+**0.1.0** 
+
+* Initial implementation 
