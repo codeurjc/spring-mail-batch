@@ -1,7 +1,11 @@
 package es.urjc.code.dad.mail.batch;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.mail.internet.MimeMessage;
 
+import org.apache.velocity.app.VelocityEngine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
@@ -9,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.ui.velocity.VelocityEngineUtils;
 
 import es.urjc.code.dad.mail.batch.model.Student;
 
@@ -18,6 +23,8 @@ public class StudentItemProcessor implements ItemProcessor<Student, MimeMessage>
 
 	@Autowired
 	private JavaMailSender mailSender;
+	@Autowired
+	private VelocityEngine engine;
 	private String sender;
 	private String attachment;
 	
@@ -32,10 +39,13 @@ public class StudentItemProcessor implements ItemProcessor<Student, MimeMessage>
 		
 		MimeMessageHelper helper = new MimeMessageHelper(message, true);
 		
-		helper.setSubject("Your code");
+		Map<String, Object> model = new HashMap<>();
+		model.put("name", student.getFullname());
+		model.put("code", student.getCode());
 		helper.setFrom(sender);
 		helper.setTo(student.getEmail());
-		helper.setText("This is your code: " + student.getCode() + ".\nFind instructions attached to this email.");
+		helper.setSubject(VelocityEngineUtils.mergeTemplateIntoString(engine, "email-subject.vm", "UTF-8", model));
+		helper.setText(VelocityEngineUtils.mergeTemplateIntoString(engine, "email-body.vm", "UTF-8", model));
 		
 		log.info("Preparing message for: " + student.getEmail());
 		
