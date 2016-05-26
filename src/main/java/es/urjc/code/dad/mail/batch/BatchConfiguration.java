@@ -40,6 +40,9 @@ public class BatchConfiguration {
 	@Value("${codeurjc.batch.attachment}")
 	private String attachment;
 	
+	@Value("${codeurjc.batch.notifications.email}")
+	private String email;
+
 	// tag::readerwriterprocessor[]
 	@Bean
 	public FlatFileItemReader<Student> reader() {
@@ -73,7 +76,7 @@ public class BatchConfiguration {
 
     @Bean
     public JobExecutionListener listener() {
-        return new JobCompletionNotificationListener();
+        return new JobCompletionNotificationListener(email);
     }
 
     // end::listener[]

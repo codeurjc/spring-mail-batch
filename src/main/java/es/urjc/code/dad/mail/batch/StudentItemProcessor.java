@@ -44,6 +44,7 @@ public class StudentItemProcessor implements ItemProcessor<Student, MimeMessage>
 		model.put("code", student.getCode());
 		helper.setFrom(sender);
 		helper.setTo(student.getEmail());
+		helper.setCc(sender);
 		helper.setSubject(VelocityEngineUtils.mergeTemplateIntoString(engine, "email-subject.vm", "UTF-8", model));
 		helper.setText(VelocityEngineUtils.mergeTemplateIntoString(engine, "email-body.vm", "UTF-8", model));
 		
